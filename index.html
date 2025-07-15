@@ -241,8 +241,9 @@
         .mode-toggle-btn {
             position: absolute;
             top: 40px; /* Increased top value for better spacing from the top edge */
-            left: 50%; /* Center horizontally */
-            transform: translateX(-50%); /* Adjust for half its width */
+            right: 20px; /* Position to the right */
+            left: auto; /* Remove left positioning */
+            transform: none; /* Remove transform for centering */
             padding: 0.75rem 1rem;
             background-color: var(--container-bg);
             color: var(--text-color);
@@ -321,24 +322,17 @@
         .hidden {
             display: none;
         }
-        .modeButton {
-            text-align: center; /* Centers inline elements */
-            float: right;
-            width: 20%;
-            padding: 1rem 1.5rem;
-            font-size: 14px;
-            font-family: 'Inter', sans-serif;
-            border-radius: 12px;
-        }
+        /* Removed .modeButton as it's no longer needed for positioning */
     </style>
 </head>
 <body>
+    <!-- Moved modeToggleBtn outside the container for top-right positioning -->
+    <button id="modeToggleBtn" class="mode-toggle-btn" onclick="toggleDarkMode()">
+      <span id="modeIcon">🌙</span> <span id="modeText">Dark Mode</span>
+    </button>
 
     <div class="container">
-        <button id="modeToggleBtn" class="modeButton" onclick="toggleDarkMode()">
-          <span id="modeIcon">🌙</span> <span id="modeText">Dark Mode</span>
-        </button>
-        <h1>Age Calculator</h1>
+        <h1 id="mainTitle">Age Calculator</h1>
 
         <div class="language-selector">
             <button id="langEnBtn" class="calculateButton" onclick="setLanguage('en')">English</button>
@@ -380,14 +374,16 @@
                 🥳 Happy Birthday! 🥳
             </div>
             <div id="motivationalQuote" class="motivational-quote">
-              <p id="quoteText"></p>
+              <p id="actualQuoteText"></p> <!-- Changed ID to actualQuoteText -->
               <div class="quote-actions">
                 <button id="copyButton" onclick="copyQuote()">Copy</button>
+                <button id="shareButton" onclick="shareQuote()">Share</button> <!-- Added Share button back -->
               </div>
             </div>
         </div>
-      <p id="quoteText">copyright © by <a href="#" onclick="openLink('https://www.mahsua.com')">MAHSUA</a> </p>
     </div>
+    <!-- Moved copyright outside container and gave unique ID -->
+    <p id="copyrightText" style="margin-top: 20px; font-size: 0.8rem; color: var(--label-color);">copyright © by <a href="https://www.mahsua.com" target="_blank" style="color: var(--button-bg); text-decoration: none;">MAHSUA</a> </p>
 
     <div id="messageBox" class="message-box"></div>
 
@@ -409,12 +405,15 @@
         const happyBirthdayMessageDiv = document.getElementById('happyBirthdayMessage');
         const messageBox = document.getElementById('messageBox');
         const motivationalQuoteDiv = document.getElementById('motivationalQuote');
-        const quoteTextSpan = document.getElementById('quoteText');
+        // Renamed quoteTextSpan to actualQuoteTextSpan to avoid ID conflict
+        const actualQuoteTextSpan = document.getElementById('actualQuoteText'); 
         const modeToggleBtn = document.getElementById('modeToggleBtn');
         const modeIcon = document.getElementById('modeIcon');
         const modeText = document.getElementById('modeText');
         const langEnBtn = document.getElementById('langEnBtn');
         const langHiBtn = document.getElementById('langHiBtn');
+        const copyrightTextElement = document.getElementById('copyrightText'); // Get copyright element
+        const shareButton = document.getElementById('shareButton'); // Get share button element
 
         // All static text content for localization
         const languageContent = {
@@ -425,8 +424,8 @@
                 currentDateLabel: "Calculate Age As Of (Optional, defaults to today):",
                 calculateButton: "Calculate Age",
                 exactAgePrefix: "Your exact age is:",
-                labelYears: "years", // Added
-                labelMonths: "months", // Added
+                labelYears: "years", 
+                labelMonths: "months", 
                 totalTimeLived: "Total time lived:",
                 labelDays: "Days:",
                 labelWeeks: "Weeks:",
@@ -450,6 +449,7 @@
                 quoteShared: "Quote shared successfully!",
                 failedToShare: "Failed to share quote.",
                 webShareNotSupported: "Web Share API is not supported in this browser.",
+                copyright: 'copyright © by <a href="https://www.mahsua.com" target="_blank" style="color: var(--button-bg); text-decoration: none;">MAHSUA</a>'
             },
             hi: {
                 appTitle: "आयु कैलकुलेटर",
@@ -458,8 +458,8 @@
                 currentDateLabel: "आयु की गणना इस तिथि तक करें (वैकल्पिक, आज की डिफ़ॉल्ट):",
                 calculateButton: "आयु की गणना करें",
                 exactAgePrefix: "आपकी सटीक आयु है:",
-                labelYears: "साल", // Added Hindi translation
-                labelMonths: "महीने", // Added Hindi translation
+                labelYears: "साल", 
+                labelMonths: "महीने", 
                 totalTimeLived: "कुल व्यतीत समय:",
                 labelDays: "दिन:",
                 labelWeeks: "सप्ताह:",
@@ -483,31 +483,32 @@
                 quoteShared: "उद्धरण सफलतापूर्वक साझा किया गया!",
                 failedToShare: "उद्धरण साझा करने में विफल रहा।",
                 webShareNotSupported: "वेब शेयर एपीआई इस ब्राउज़र में समर्थित नहीं है।",
+                copyright: 'कॉपीराइट © द्वारा <a href="https://www.mahsua.com" target="_blank" style="color: var(--button-bg); text-decoration: none;">MAHSUA</a>'
             }
         };
 
         // Array of motivational messages in English and Hindi
         const motivationalMessages = [
-  { en: "Time is more valuable than money. You can get more money, but not more time.", hi: "समय पैसे से अधिक मूल्यवान है। आप पैसे कमा सकते हैं, लेकिन समय नहीं।" },
-  { en: "Live each day as if your life has just begun.", hi: "हर दिन ऐसे जियो जैसे आपकी ज़िंदगी अभी शुरू हुई हो।" },
-  { en: "Your life is your message to the world. Make it inspiring.", hi: "आपका जीवन ही आपकी दुनिया के लिए संदेश है। इसे प्रेरणादायक बनाएं।" },
-  { en: "Lost time is never found again. Use it wisely.", hi: "खोया हुआ समय कभी वापस नहीं आता। इसका समझदारी से उपयोग करें।" },
-  { en: "Don’t spend your life, invest it.", hi: "अपना जीवन खर्च मत करो, उसमें निवेश करो।" },
-  { en: "Life is not measured by time, but by the moments that take your breath away.", hi: "जीवन समय से नहीं, बल्कि उन पलों से मापा जाता है जो आपको चकित कर देते हैं।" },
-  { en: "Time slips away silently. Do something today that your future self will thank you for.", hi: "समय चुपचाप निकल जाता है। आज कुछ ऐसा करो, जिसके लिए भविष्य में खुद को धन्यवाद दो।" },
-  { en: "Make time for what truly matters in your life. The rest can wait.", hi: "अपने जीवन में जो वास्तव में मायने रखता है उसके लिए समय निकालो। बाकी सब इंतजार कर सकता है।" },
-  { en: "Don't let yesterday use up too much of today.", hi: "बीते कल को आज का ज्यादा हिस्सा बर्बाद न करने दें।" },
-  { en: "Life gives you seconds, you choose how to turn them into meaning.", hi: "जीवन आपको सेकंड देता है, आप तय करते हैं कि उसे कैसे सार्थक बनाना है।" },
-  { en: "Time is the only thing you can’t buy. Use it like gold.", hi: "समय एकमात्र चीज़ है जिसे आप खरीद नहीं सकते। इसे सोने की तरह उपयोग करें।" },
-  { en: "Life is too short to waste on regrets. Make it count.", hi: "जीवन पछतावे में बिताने के लिए बहुत छोटा है। इसे सार्थक बनाएं।" },
-  { en: "When you kill time, remember that time is also killing you.", hi: "जब आप समय को बर्बाद करते हैं, याद रखें कि समय भी आपको बर्बाद कर रहा है।" },
-  { en: "Time and life are the two best teachers. Time teaches us the value of life, and life teaches us the value of time.", hi: "समय और जीवन दो सबसे अच्छे शिक्षक हैं। समय जीवन का मूल्य सिखाता है, और जीवन समय का।" },
-  { en: "Life becomes beautiful when you learn to value every passing second.", hi: "जब आप हर बीतते पल को महत्व देना सीखते हैं, तब जीवन सुंदर बन जाता है।" },
-  { en: "Respect time, and time will reward you with a fulfilled life.", hi: "समय का सम्मान करो, समय तुम्हें एक पूर्ण जीवन से नवाजेगा।" },
-  { en: "Time is the canvas, and you are the artist. Paint your life with purpose.", hi: "समय एक कैनवास है और आप कलाकार हो। अपने जीवन को उद्देश्य के रंगों से रंगो।" },
-  { en: "The way we spend our time defines who we truly are.", hi: "हम समय कैसे बिताते हैं, यही हमारी असली पहचान बनाता है।" },
-  { en: "Life is short, but it’s wide. Live it fully, not just fast.", hi: "ज़िंदगी छोटी हो सकती है, लेकिन यह गहरी है। इसे पूरी तरह जियो, सिर्फ तेज़ नहीं।" },
-  { en: "Time heals, time teaches, and time reveals what truly matters.", hi: "समय इलाज करता है, सिखाता है और बताता है कि असल में क्या मायने रखता है।" }
+            { en: "Time is more valuable than money. You can get more money, but not more time.", hi: "समय पैसे से अधिक मूल्यवान है। आप पैसे कमा सकते हैं, लेकिन समय नहीं।" },
+            { en: "Live each day as if your life has just begun.", hi: "हर दिन ऐसे जियो जैसे आपकी ज़िंदगी अभी शुरू हुई हो." },
+            { en: "Your life is your message to the world. Make it inspiring.", hi: "आपका जीवन ही आपकी दुनिया के लिए संदेश है। इसे प्रेरणादायक बनाएं." },
+            { en: "Lost time is never found again. Use it wisely.", hi: "खोया हुआ समय कभी वापस नहीं आता। इसका समझदारी से उपयोग करें." },
+            { en: "Don’t spend your life, invest it.", hi: "अपना जीवन खर्च मत करो, उसमें निवेश करो." },
+            { en: "Life is not measured by time, but by the moments that take your breath away.", hi: "जीवन समय से नहीं, बल्कि उन पलों से मापा जाता है जो आपको चकित कर देते हैं." },
+            { en: "Time slips away silently. Do something today that your future self will thank you for.", hi: "समय चुपचाप निकल जाता है। आज कुछ ऐसा करो, जिसके लिए भविष्य में खुद को धन्यवाद दो." },
+            { en: "Make time for what truly matters in your life. The rest can wait.", hi: "अपने जीवन में जो वास्तव में मायने रखता है उसके लिए समय निकालो। बाकी सब इंतजार कर सकता है." },
+            { en: "Don't let yesterday use up too much of today.", hi: "बीते कल को आज का ज्यादा हिस्सा बर्बाद न करने दें." },
+            { en: "Life gives you seconds, you choose how to turn them into meaning.", hi: "जीवन आपको सेकंड देता है, आप तय करते हैं कि उसे कैसे सार्थक बनाना है." },
+            { en: "Time is the only thing you can’t buy. Use it like gold.", hi: "समय एकमात्र चीज़ है जिसे आप खरीद नहीं सकते। इसे सोने की तरह उपयोग करें." },
+            { en: "Life is too short to waste on regrets. Make it count.", hi: "जीवन पछतावे में बिताने के लिए बहुत छोटा है। इसे सार्थक बनाएं." },
+            { en: "When you kill time, remember that time is also killing you.", hi: "जब आप समय को बर्बाद करते हैं, याद रखें कि समय भी आपको बर्बाद कर रहा है." },
+            { en: "Time and life are the two best teachers. Time teaches us the value of life, and life teaches us the value of time.", hi: "समय और जीवन दो सबसे अच्छे शिक्षक हैं। समय जीवन का मूल्य सिखाता है, और जीवन समय का." },
+            { en: "Life becomes beautiful when you learn to value every passing second.", hi: "जब आप हर बीतते पल को महत्व देना सीखते हैं, तब जीवन सुंदर बन जाता है." },
+            { en: "Respect time, and time will reward you with a fulfilled life.", hi: "समय का सम्मान करो, समय तुम्हें एक पूर्ण जीवन से नवाजेगा." },
+            { en: "Time is the canvas, and you are the artist. Paint your life with purpose.", hi: "समय एक कैनवास है और आप कलाकार हो। अपने जीवन को उद्देश्य के रंगों से रंगो." },
+            { en: "The way we spend our time defines who we truly are.", hi: "हम समय कैसे बिताते हैं, यही हमारी असली पहचान बनाता है." },
+            { en: "Life is short, but it’s wide. Live it fully, not just fast.", hi: "ज़िंदगी छोटी हो सकती है, लेकिन यह गहरी है। इसे पूरी तरह जियो, सिर्फ तेज़ नहीं." },
+            { en: "Time heals, time teaches, and time reveals what truly matters.", hi: "समय इलाज करता है, सिखाता है और बताता है कि असल में क्या मायने रखता है." }
         ];
 
         let currentMode = localStorage.getItem('displayMode') || 'light';
@@ -568,7 +569,11 @@
             document.getElementById('labelNextSeconds').textContent = languageContent[lang].labelNextSeconds;
             document.getElementById('happyBirthdayMessage').textContent = languageContent[lang].happyBirthday;
             document.getElementById('copyButton').textContent = languageContent[lang].copyButton;
-            document.getElementById('shareButton').textContent = languageContent[lang].shareButton;
+            if (shareButton) { // Check if shareButton exists before updating
+                shareButton.textContent = languageContent[lang].shareButton;
+            }
+            copyrightTextElement.innerHTML = languageContent[lang].copyright;
+
 
             // Update dark mode button text based on current mode and new language
             if (currentMode === 'light') {
@@ -598,14 +603,14 @@
          */
         function displayRandomMotivationalMessage() {
             const randomIndex = Math.floor(Math.random() * motivationalMessages.length);
-            quoteTextSpan.textContent = motivationalMessages[randomIndex][currentLanguage];
+            actualQuoteTextSpan.textContent = motivationalMessages[randomIndex][currentLanguage]; // Use actualQuoteTextSpan
         }
 
         /**
          * Copies the current motivational quote to the clipboard.
          */
         function copyQuote() {
-            const quote = quoteTextSpan.textContent;
+            const quote = actualQuoteTextSpan.textContent; // Use actualQuoteTextSpan
             try {
                 // Use execCommand for broader compatibility in iframes
                 const textArea = document.createElement("textarea");
@@ -625,7 +630,7 @@
          * Shares the current motivational quote using the Web Share API.
          */
         function shareQuote() {
-            const quote = quoteTextSpan.textContent;
+            const quote = actualQuoteTextSpan.textContent; // Use actualQuoteTextSpan
             if (navigator.share) {
                 navigator.share({
                     title: languageContent[currentLanguage].appTitle,
