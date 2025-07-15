@@ -27,13 +27,13 @@ To run this project locally, follow these simple steps:
 
 1.  **Clone the repository:**
     ```bash
-    git clone [https://github.com/your-username/age-calculator.git](https://github.com/your-username/age-calculator.git)
+    git clone https://github.com/MahsuaIT/Age-Calculator.git
     ```
 
 
 2.  **Navigate to the project directory:**
     ```bash
-    cd age-calculator
+    cd Age-Calculator
     ```
 
 3.  **Open `index.html`:**
